@@ -7,7 +7,7 @@ import { FIXED_CATEGORIES } from '../../constants/categories';
 import { useFixedExpenses } from '../../hooks/useFixedExpenses';
 import { CurrencyInput } from '../../components/CurrencyInput';
 import { CategoryPicker } from '../../components/CategoryPicker';
-import { toCents } from '../../utils/currencyUtils';
+import { toCents, parseAmount } from '../../utils/currencyUtils';
 import { FixedCategory } from '../../types';
 
 export default function AddFixedExpenseScreen({ navigation }: any) {
@@ -19,7 +19,7 @@ export default function AddFixedExpenseScreen({ navigation }: any) {
 
   const handleSave = async () => {
     if (!name.trim()) return Alert.alert('Error', 'Please enter a name.');
-    const amt = parseFloat(amount);
+    const amt = parseAmount(amount);
     if (!amt || amt <= 0) return Alert.alert('Error', 'Please enter a valid amount.');
     await add(name.trim(), category, toCents(amt));
     navigation.goBack();

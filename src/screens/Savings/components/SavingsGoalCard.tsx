@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'reac
 import { Ionicons } from '@expo/vector-icons';
 import { SavingsGoal } from '../../../types';
 import { Colors } from '../../../constants/colors';
-import { formatCurrency } from '../../../utils/currencyUtils';
+import { formatCurrency, parseAmount, normalizeAmountInput } from '../../../utils/currencyUtils';
 import { ConfirmDialog } from '../../../components/ConfirmDialog';
 
 interface Props {
@@ -20,7 +20,7 @@ export function SavingsGoalCard({ goal, onContribute, onDelete }: Props) {
   const pct = goal.targetAmount > 0 ? Math.min(100, (goal.currentAmount / goal.targetAmount) * 100) : 0;
 
   const handleContrib = () => {
-    const val = parseFloat(contribInput);
+    const val = parseAmount(contribInput);
     if (!val || val <= 0) return Alert.alert('Error', 'Enter a valid amount.');
     onContribute(val);
     setContributing(false);
@@ -57,7 +57,7 @@ export function SavingsGoalCard({ goal, onContribute, onDelete }: Props) {
             <TextInput
               style={styles.contribInput}
               value={contribInput}
-              onChangeText={setContribInput}
+              onChangeText={text => setContribInput(normalizeAmountInput(text))}
               placeholder="Amount"
               keyboardType="decimal-pad"
               placeholderTextColor={Colors.textSecondary}

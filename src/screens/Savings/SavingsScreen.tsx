@@ -3,12 +3,11 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react
 import { Ionicons } from '@expo/vector-icons';
 import { useSavings } from '../../hooks/useSavings';
 import { Colors } from '../../constants/colors';
-import { formatCurrency, toCents } from '../../utils/currencyUtils';
+import { formatCurrency, toCents, centsToInputValue, parseAmount } from '../../utils/currencyUtils';
 import { getCurrentMonthKey } from '../../utils/dateUtils';
 import { SavingsGoalCard } from './components/SavingsGoalCard';
 import { EmptyState } from '../../components/EmptyState';
 import { CurrencyInput } from '../../components/CurrencyInput';
-import { fromCents } from '../../utils/currencyUtils';
 
 export default function SavingsScreen({ navigation }: any) {
   const { goals, monthlyTarget, saveMonthlyTarget, removeGoal, contribute, reload } = useSavings();
@@ -16,12 +15,12 @@ export default function SavingsScreen({ navigation }: any) {
   const [targetInput, setTargetInput] = useState('');
 
   const startEditTarget = () => {
-    setTargetInput(fromCents(monthlyTarget).toFixed(2));
+    setTargetInput(centsToInputValue(monthlyTarget));
     setEditingTarget(true);
   };
 
   const saveTarget = async () => {
-    const val = parseFloat(targetInput) || 0;
+    const val = parseAmount(targetInput) || 0;
     await saveMonthlyTarget(toCents(val));
     setEditingTarget(false);
   };

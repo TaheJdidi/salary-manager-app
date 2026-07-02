@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextInput, StyleSheet, View, Text } from 'react-native';
 import { Colors } from '../constants/colors';
+import { normalizeAmountInput } from '../utils/currencyUtils';
 
 interface Props {
   value: string;
@@ -16,13 +17,7 @@ export function CurrencyInput({ value, onChangeText, placeholder = '0.00', symbo
       <TextInput
         style={styles.input}
         value={value}
-        onChangeText={text => {
-          // allow digits and one dot
-          const cleaned = text.replace(/[^0-9.]/g, '');
-          const parts = cleaned.split('.');
-          const formatted = parts.length > 1 ? `${parts[0]}.${parts[1].slice(0, 2)}` : cleaned;
-          onChangeText(formatted);
-        }}
+        onChangeText={text => onChangeText(normalizeAmountInput(text))}
         placeholder={placeholder}
         keyboardType="decimal-pad"
         placeholderTextColor={Colors.textSecondary}

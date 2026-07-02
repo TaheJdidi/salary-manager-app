@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/colors';
 import { useSavings } from '../../hooks/useSavings';
 import { CurrencyInput } from '../../components/CurrencyInput';
-import { toCents } from '../../utils/currencyUtils';
+import { toCents, parseAmount } from '../../utils/currencyUtils';
 
 export default function AddGoalScreen({ navigation }: any) {
   const { addGoal } = useSavings();
@@ -14,7 +14,7 @@ export default function AddGoalScreen({ navigation }: any) {
 
   const handleSave = async () => {
     if (!name.trim()) return Alert.alert('Error', 'Please enter a goal name.');
-    const amt = parseFloat(target);
+    const amt = parseAmount(target);
     if (!amt || amt <= 0) return Alert.alert('Error', 'Please enter a valid target amount.');
     await addGoal(name.trim(), toCents(amt), deadline.trim() || null);
     navigation.goBack();

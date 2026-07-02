@@ -7,7 +7,7 @@ import { VARIABLE_CATEGORIES } from '../../constants/categories';
 import { useVariableExpenses } from '../../hooks/useVariableExpenses';
 import { CurrencyInput } from '../../components/CurrencyInput';
 import { CategoryPicker } from '../../components/CategoryPicker';
-import { toCents } from '../../utils/currencyUtils';
+import { toCents, parseAmount } from '../../utils/currencyUtils';
 import { todayISO, toMonthKey } from '../../utils/dateUtils';
 import { VariableCategory } from '../../types';
 
@@ -21,7 +21,7 @@ export default function AddVariableExpenseScreen({ route, navigation }: any) {
   const [pickerVisible, setPickerVisible] = useState(false);
 
   const handleSave = async () => {
-    const amt = parseFloat(amount);
+    const amt = parseAmount(amount);
     if (!amt || amt <= 0) return Alert.alert('Error', 'Please enter a valid amount.');
     await add(toCents(amt), category, date, note.trim() || null);
     navigation.goBack();

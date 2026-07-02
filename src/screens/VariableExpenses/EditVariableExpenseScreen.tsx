@@ -7,20 +7,20 @@ import { VARIABLE_CATEGORIES } from '../../constants/categories';
 import { useVariableExpenses } from '../../hooks/useVariableExpenses';
 import { CurrencyInput } from '../../components/CurrencyInput';
 import { CategoryPicker } from '../../components/CategoryPicker';
-import { toCents, fromCents } from '../../utils/currencyUtils';
+import { toCents, centsToInputValue, parseAmount } from '../../utils/currencyUtils';
 import { VariableCategory, VariableExpense } from '../../types';
 
 export default function EditVariableExpenseScreen({ route, navigation }: any) {
   const expense: VariableExpense = route.params.expense;
   const { update } = useVariableExpenses(expense.monthKey);
-  const [amount, setAmount] = useState(fromCents(expense.amount).toFixed(2));
+  const [amount, setAmount] = useState(centsToInputValue(expense.amount));
   const [category, setCategory] = useState<VariableCategory>(expense.category);
   const [date, setDate] = useState(expense.date);
   const [note, setNote] = useState(expense.note ?? '');
   const [pickerVisible, setPickerVisible] = useState(false);
 
   const handleSave = async () => {
-    const amt = parseFloat(amount);
+    const amt = parseAmount(amount);
     if (!amt || amt <= 0) return Alert.alert('Error', 'Please enter a valid amount.');
     await update(expense.id, toCents(amt), category, date, note.trim() || null);
     navigation.goBack();

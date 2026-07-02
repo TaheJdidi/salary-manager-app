@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/colors';
 import { useIncome } from '../../hooks/useIncome';
-import { fromCents, toCents } from '../../utils/currencyUtils';
+import { toCents, centsToInputValue, parseAmount } from '../../utils/currencyUtils';
 import { CurrencyInput } from '../../components/CurrencyInput';
 
 export default function IncomeSetupScreen({ navigation }: any) {
@@ -13,14 +13,14 @@ export default function IncomeSetupScreen({ navigation }: any) {
 
   useEffect(() => {
     if (income) {
-      setSalary(fromCents(income.monthlySalary).toFixed(2));
-      setOther(fromCents(income.otherIncome).toFixed(2));
+      setSalary(centsToInputValue(income.monthlySalary));
+      setOther(centsToInputValue(income.otherIncome));
     }
   }, [income]);
 
   const handleSave = async () => {
-    const s = parseFloat(salary) || 0;
-    const o = parseFloat(other) || 0;
+    const s = parseAmount(salary) || 0;
+    const o = parseAmount(other) || 0;
     await save(toCents(s), toCents(o));
     Alert.alert('Saved', 'Income updated successfully.');
     navigation.goBack();
