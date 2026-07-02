@@ -29,6 +29,8 @@ export function BottomTabNavigator() {
         tabBarInactiveTintColor: Colors.textSecondary,
         tabBarStyle: { borderTopColor: Colors.border, backgroundColor: Colors.surface },
         headerShown: false,
+        // Reset each tab's stack (and unsaved forms) when navigating away.
+        unmountOnBlur: true,
       })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />

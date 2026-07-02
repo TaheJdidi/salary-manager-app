@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { DashboardData } from '../types';
 import { getIncome } from '../repositories/incomeRepo';
 import { getFixedExpensesTotal } from '../repositories/fixedExpenseRepo';
@@ -60,7 +61,12 @@ export function useDashboard(monthKey: string = getCurrentMonthKey()) {
     }
   }, [monthKey]);
 
-  useEffect(() => { load(); }, [load]);
+  // Reload every time the screen regains focus (e.g. after adding data elsewhere).
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
 
   return { data, loading, reload: load };
 }

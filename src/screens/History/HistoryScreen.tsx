@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { MonthlySnapshot } from '../../types';
 import { getSnapshots } from '../../repositories/monthlySnapshotRepo';
 import { Colors } from '../../constants/colors';
@@ -11,9 +12,19 @@ export default function HistoryScreen({ navigation }: any) {
   const [snapshots, setSnapshots] = useState<MonthlySnapshot[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    getSnapshots(24).then(s => { setSnapshots(s); setLoading(false); });
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      setLoading(true);
+      getSnapshots(24).then(s => {
+        if (active) {
+          setSnapshots(s);
+          setLoading(false);
+        }
+      });
+      return () => { active = false; };
+    }, [])
+  );
 
   if (loading) return <ActivityIndicator style={{ flex: 1 }} color={Colors.primary} />;
 

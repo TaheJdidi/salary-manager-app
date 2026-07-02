@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { MonthlySnapshot } from '../../types';
 import { getSnapshot } from '../../repositories/monthlySnapshotRepo';
 import { getVariableExpensesByCategory } from '../../repositories/variableExpenseRepo';
@@ -13,12 +14,18 @@ export default function MonthDetailScreen({ route }: any) {
   const [snapshot, setSnapshot] = useState<MonthlySnapshot | null>(null);
   const [byCategory, setByCategory] = useState<{ category: string; total: number }[]>([]);
 
-  useEffect(() => {
-    Promise.all([getSnapshot(monthKey), getVariableExpensesByCategory(monthKey)]).then(([s, c]) => {
-      setSnapshot(s);
-      setByCategory(c);
-    });
-  }, [monthKey]);
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      Promise.all([getSnapshot(monthKey), getVariableExpensesByCategory(monthKey)]).then(([s, c]) => {
+        if (active) {
+          setSnapshot(s);
+          setByCategory(c);
+        }
+      });
+      return () => { active = false; };
+    }, [monthKey])
+  );
 
   if (!snapshot) return <ActivityIndicator style={{ flex: 1 }} color={Colors.primary} />;
 

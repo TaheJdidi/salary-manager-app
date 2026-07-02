@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Pressable } from 'react-native';
 import { Colors } from '../constants/colors';
 
 interface Props {
@@ -13,9 +13,9 @@ interface Props {
 
 export function ConfirmDialog({ visible, title, message, confirmLabel = 'Delete', onConfirm, onCancel }: Props) {
   return (
-    <Modal visible={visible} transparent animationType="fade">
-      <View style={styles.overlay}>
-        <View style={styles.dialog}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+      <Pressable style={styles.overlay} onPress={onCancel}>
+        <Pressable style={styles.dialog} onPress={() => {}}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.message}>{message}</Text>
           <View style={styles.actions}>
@@ -26,8 +26,8 @@ export function ConfirmDialog({ visible, title, message, confirmLabel = 'Delete'
               <Text style={styles.confirmText}>{confirmLabel}</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

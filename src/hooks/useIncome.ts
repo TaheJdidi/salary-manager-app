@@ -1,6 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Income } from '../types';
 import { getIncome, upsertIncome } from '../repositories/incomeRepo';
+import { getCurrentMonthKey } from '../utils/dateUtils';
+import { recomputeSnapshot } from '../services/snapshotService';
 
 export function useIncome() {
   const [income, setIncome] = useState<Income | null>(null);
@@ -16,10 +19,15 @@ export function useIncome() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
 
   const save = useCallback(async (monthlySalary: number, otherIncome: number) => {
     await upsertIncome(monthlySalary, otherIncome);
+    await recomputeSnapshot(getCurrentMonthKey());
     await load();
   }, [load]);
 

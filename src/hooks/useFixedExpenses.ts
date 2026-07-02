@@ -1,10 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { FixedExpenseWithPayment, FixedCategory } from '../types';
 import {
   getFixedExpensesWithPayment, addFixedExpense, updateFixedExpense,
   deleteFixedExpense, toggleFixedExpensePaid,
 } from '../repositories/fixedExpenseRepo';
 import { getCurrentMonthKey } from '../utils/dateUtils';
+import { recomputeSnapshot } from '../services/snapshotService';
 
 export function useFixedExpenses(monthKey: string = getCurrentMonthKey()) {
   const [expenses, setExpenses] = useState<FixedExpenseWithPayment[]>([]);
@@ -19,22 +21,29 @@ export function useFixedExpenses(monthKey: string = getCurrentMonthKey()) {
     }
   }, [monthKey]);
 
-  useEffect(() => { load(); }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
 
   const add = useCallback(async (name: string, category: FixedCategory, amount: number) => {
     await addFixedExpense(name, category, amount);
+    await recomputeSnapshot(monthKey);
     await load();
-  }, [load]);
+  }, [monthKey, load]);
 
   const update = useCallback(async (id: number, name: string, category: FixedCategory, amount: number) => {
     await updateFixedExpense(id, name, category, amount);
+    await recomputeSnapshot(monthKey);
     await load();
-  }, [load]);
+  }, [monthKey, load]);
 
   const remove = useCallback(async (id: number) => {
     await deleteFixedExpense(id);
+    await recomputeSnapshot(monthKey);
     await load();
-  }, [load]);
+  }, [monthKey, load]);
 
   const togglePaid = useCallback(async (fixedExpenseId: number, isPaid: boolean) => {
     await toggleFixedExpensePaid(fixedExpenseId, monthKey, isPaid);

@@ -1,9 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { SavingsGoal } from '../types';
 import {
   getSavingsGoals, addSavingsGoal, deleteSavingsGoal,
   addContribution, getMonthlySavingsTarget, setMonthlySavingsTarget,
 } from '../repositories/savingsRepo';
+import { getCurrentMonthKey } from '../utils/dateUtils';
+import { recomputeSnapshot } from '../services/snapshotService';
 
 export function useSavings() {
   const [goals, setGoals] = useState<SavingsGoal[]>([]);
@@ -21,7 +24,11 @@ export function useSavings() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
 
   const addGoal = useCallback(async (name: string, targetAmount: number, deadline: string | null) => {
     await addSavingsGoal(name, targetAmount, deadline);
@@ -40,6 +47,7 @@ export function useSavings() {
 
   const saveMonthlyTarget = useCallback(async (amount: number) => {
     await setMonthlySavingsTarget(amount);
+    await recomputeSnapshot(getCurrentMonthKey());
     await load();
   }, [load]);
 
