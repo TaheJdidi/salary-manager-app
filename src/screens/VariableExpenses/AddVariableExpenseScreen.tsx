@@ -7,15 +7,17 @@ import { VARIABLE_CATEGORIES } from '../../constants/categories';
 import { useVariableExpenses } from '../../hooks/useVariableExpenses';
 import { CurrencyInput } from '../../components/CurrencyInput';
 import { CategoryPicker } from '../../components/CategoryPicker';
+import { PrioritySelector } from '../../components/PrioritySelector';
 import { toCents, parseAmount } from '../../utils/currencyUtils';
 import { todayISO, toMonthKey } from '../../utils/dateUtils';
-import { VariableCategory } from '../../types';
+import { VariableCategory, Priority } from '../../types';
 
 export default function AddVariableExpenseScreen({ route, navigation }: any) {
   const defaultMonth: string = route?.params?.defaultMonth ?? toMonthKey(new Date());
   const { add } = useVariableExpenses(defaultMonth);
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState<VariableCategory>('groceries');
+  const [priority, setPriority] = useState<Priority>('medium');
   const [date, setDate] = useState(todayISO());
   const [note, setNote] = useState('');
   const [pickerVisible, setPickerVisible] = useState(false);
@@ -23,7 +25,7 @@ export default function AddVariableExpenseScreen({ route, navigation }: any) {
   const handleSave = async () => {
     const amt = parseAmount(amount);
     if (!amt || amt <= 0) return Alert.alert('Error', 'Please enter a valid amount.');
-    await add(toCents(amt), category, date, note.trim() || null);
+    await add(toCents(amt), category, priority, date, note.trim() || null);
     navigation.goBack();
   };
 
@@ -54,6 +56,11 @@ export default function AddVariableExpenseScreen({ route, navigation }: any) {
             <Text style={styles.catLabel}>{selectedCat?.label}</Text>
             <Ionicons name="chevron-down" size={16} color={Colors.textSecondary} />
           </TouchableOpacity>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.label}>Priority</Text>
+          <PrioritySelector value={priority} onChange={setPriority} />
         </View>
 
         <View style={styles.card}>

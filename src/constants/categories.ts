@@ -6,6 +6,12 @@ export const FIXED_CATEGORIES = [
   { key: 'custom', label: 'Other', icon: 'ellipsis-horizontal' },
 ] as const;
 
+export const PRIORITIES = [
+  { key: 'high', label: 'High', color: '#22C55E' },   // essential
+  { key: 'medium', label: 'Medium', color: '#F59E0B' },
+  { key: 'low', label: 'Low', color: '#EF4444' },      // discretionary — flagged so it stands out
+] as const;
+
 export const VARIABLE_CATEGORIES = [
   { key: 'groceries', label: 'Groceries', icon: 'cart' },
   { key: 'dining', label: 'Dining Out', icon: 'restaurant' },

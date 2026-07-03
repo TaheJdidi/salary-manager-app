@@ -33,6 +33,7 @@ export const CREATE_TABLES = `
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     amount      INTEGER NOT NULL,
     category    TEXT NOT NULL,
+    priority    TEXT NOT NULL DEFAULT 'medium',
     date        TEXT NOT NULL,
     month_key   TEXT NOT NULL,
     note        TEXT,

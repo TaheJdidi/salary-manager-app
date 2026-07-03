@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { VariableExpense } from '../../../types';
 import { Colors } from '../../../constants/colors';
 import { formatCurrency } from '../../../utils/currencyUtils';
-import { VARIABLE_CATEGORIES } from '../../../constants/categories';
+import { VARIABLE_CATEGORIES, PRIORITIES } from '../../../constants/categories';
 import { ConfirmDialog } from '../../../components/ConfirmDialog';
 
 interface Props {
@@ -16,6 +16,7 @@ interface Props {
 export function ExpenseListItem({ expense, onEdit, onDelete }: Props) {
   const [confirmVisible, setConfirmVisible] = useState(false);
   const cat = VARIABLE_CATEGORIES.find(c => c.key === expense.category);
+  const prio = PRIORITIES.find(p => p.key === expense.priority);
 
   return (
     <View style={styles.card}>
@@ -23,7 +24,15 @@ export function ExpenseListItem({ expense, onEdit, onDelete }: Props) {
         <Ionicons name={cat?.icon as any ?? 'cart'} size={18} color={Colors.primary} />
       </View>
       <View style={styles.info}>
-        <Text style={styles.category}>{cat?.label ?? expense.category}</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.category}>{cat?.label ?? expense.category}</Text>
+          {prio ? (
+            <View style={[styles.priorityBadge, { backgroundColor: prio.color + '22' }]}>
+              <View style={[styles.priorityDot, { backgroundColor: prio.color }]} />
+              <Text style={[styles.priorityText, { color: prio.color }]}>{prio.label}</Text>
+            </View>
+          ) : null}
+        </View>
         {expense.note ? <Text style={styles.note}>{expense.note}</Text> : null}
         <Text style={styles.date}>{expense.date}</Text>
       </View>
@@ -53,7 +62,14 @@ const styles = StyleSheet.create({
   },
   iconBg: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   info: { flex: 1 },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   category: { fontSize: 14, fontWeight: '600', color: Colors.textPrimary },
+  priorityBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6,
+  },
+  priorityDot: { width: 6, height: 6, borderRadius: 3 },
+  priorityText: { fontSize: 10, fontWeight: '700' },
   note: { fontSize: 12, color: Colors.textSecondary, marginTop: 1 },
   date: { fontSize: 11, color: Colors.textSecondary, marginTop: 2 },
   amount: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },

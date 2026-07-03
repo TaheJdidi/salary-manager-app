@@ -8,6 +8,8 @@ export type VariableCategory =
   | 'health'
   | 'custom';
 
+export type Priority = 'high' | 'medium' | 'low';
+
 export interface Income {
   id: number;
   monthlySalary: number; // cents
@@ -42,6 +44,7 @@ export interface VariableExpense {
   id: number;
   amount: number; // cents
   category: VariableCategory;
+  priority: Priority;
   date: string;     // YYYY-MM-DD
   monthKey: string; // YYYY-MM
   note: string | null;

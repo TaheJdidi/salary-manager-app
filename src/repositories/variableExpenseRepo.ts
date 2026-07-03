@@ -1,10 +1,11 @@
 import { getDb } from '../db/db';
-import { VariableExpense, VariableCategory } from '../types';
+import { VariableExpense, VariableCategory, Priority } from '../types';
 import { nowISO, toMonthKey } from '../utils/dateUtils';
 
 function mapRow(r: any): VariableExpense {
   return {
     id: r.id, amount: r.amount, category: r.category as VariableCategory,
+    priority: (r.priority ?? 'medium') as Priority,
     date: r.date, monthKey: r.month_key, note: r.note ?? null, createdAt: r.created_at,
   };
 }
@@ -19,25 +20,25 @@ export async function getVariableExpenses(monthKey: string): Promise<VariableExp
 }
 
 export async function addVariableExpense(
-  amount: number, category: VariableCategory, date: string, note: string | null
+  amount: number, category: VariableCategory, priority: Priority, date: string, note: string | null
 ): Promise<number> {
   const db = getDb();
   const monthKey = toMonthKey(date);
   const result = await db.runAsync(
-    'INSERT INTO variable_expenses (amount, category, date, month_key, note, created_at) VALUES (?, ?, ?, ?, ?, ?);',
-    [amount, category, date, monthKey, note, nowISO()]
+    'INSERT INTO variable_expenses (amount, category, priority, date, month_key, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?);',
+    [amount, category, priority, date, monthKey, note, nowISO()]
   );
   return result.lastInsertRowId;
 }
 
 export async function updateVariableExpense(
-  id: number, amount: number, category: VariableCategory, date: string, note: string | null
+  id: number, amount: number, category: VariableCategory, priority: Priority, date: string, note: string | null
 ): Promise<void> {
   const db = getDb();
   const monthKey = toMonthKey(date);
   await db.runAsync(
-    'UPDATE variable_expenses SET amount = ?, category = ?, date = ?, month_key = ?, note = ? WHERE id = ?;',
-    [amount, category, date, monthKey, note, id]
+    'UPDATE variable_expenses SET amount = ?, category = ?, priority = ?, date = ?, month_key = ?, note = ? WHERE id = ?;',
+    [amount, category, priority, date, monthKey, note, id]
   );
 }
 

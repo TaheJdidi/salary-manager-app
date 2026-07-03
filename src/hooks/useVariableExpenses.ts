@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { VariableExpense, VariableCategory } from '../types';
+import { VariableExpense, VariableCategory, Priority } from '../types';
 import {
   getVariableExpenses, addVariableExpense, updateVariableExpense, deleteVariableExpense,
 } from '../repositories/variableExpenseRepo';
@@ -26,14 +26,14 @@ export function useVariableExpenses(monthKey: string = getCurrentMonthKey()) {
     }, [load])
   );
 
-  const add = useCallback(async (amount: number, category: VariableCategory, date: string, note: string | null) => {
-    await addVariableExpense(amount, category, date, note);
+  const add = useCallback(async (amount: number, category: VariableCategory, priority: Priority, date: string, note: string | null) => {
+    await addVariableExpense(amount, category, priority, date, note);
     await recomputeSnapshot(toMonthKey(date));
     await load();
   }, [load]);
 
-  const update = useCallback(async (id: number, amount: number, category: VariableCategory, date: string, note: string | null) => {
-    await updateVariableExpense(id, amount, category, date, note);
+  const update = useCallback(async (id: number, amount: number, category: VariableCategory, priority: Priority, date: string, note: string | null) => {
+    await updateVariableExpense(id, amount, category, priority, date, note);
     await recomputeSnapshot(toMonthKey(date));
     await load();
   }, [load]);
@@ -46,5 +46,13 @@ export function useVariableExpenses(monthKey: string = getCurrentMonthKey()) {
 
   const total = expenses.reduce((sum, e) => sum + e.amount, 0);
 
-  return { expenses, loading, total, add, update, remove, reload: load };
+  const totalsByPriority = expenses.reduce(
+    (acc, e) => {
+      acc[e.priority] = (acc[e.priority] ?? 0) + e.amount;
+      return acc;
+    },
+    { high: 0, medium: 0, low: 0 } as Record<Priority, number>
+  );
+
+  return { expenses, loading, total, totalsByPriority, add, update, remove, reload: load };
 }
