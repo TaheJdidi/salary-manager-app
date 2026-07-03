@@ -43,17 +43,22 @@ export default function VariableExpensesScreen({ navigation }: any) {
         <Text style={styles.totalLabel}>Total Variable</Text>
         <Text style={styles.totalAmount}>{formatCurrency(total)}</Text>
         <View style={styles.priorityRow}>
-          {PRIORITIES.map(p => (
-            <View key={p.key} style={styles.priorityStat}>
-              <View style={styles.priorityStatHeader}>
-                <View style={[styles.priorityDot, { backgroundColor: p.color }]} />
-                <Text style={styles.priorityStatLabel}>{p.label}</Text>
+          {PRIORITIES.map(p => {
+            const amount = totalsByPriority[p.key];
+            const percent = total > 0 ? Math.round((amount / total) * 100) : 0;
+            return (
+              <View key={p.key} style={styles.priorityStat}>
+                <View style={styles.priorityStatHeader}>
+                  <View style={[styles.priorityDot, { backgroundColor: p.color }]} />
+                  <Text style={styles.priorityStatLabel}>{p.label}</Text>
+                </View>
+                <Text style={[styles.priorityStatValue, { color: p.color }]}>
+                  {formatCurrency(amount)}
+                </Text>
+                <Text style={styles.priorityStatPercent}>{percent}%</Text>
               </View>
-              <Text style={[styles.priorityStatValue, { color: p.color }]}>
-                {formatCurrency(totalsByPriority[p.key])}
-              </Text>
-            </View>
-          ))}
+            );
+          })}
         </View>
       </View>
 
@@ -107,6 +112,7 @@ const styles = StyleSheet.create({
   priorityDot: { width: 7, height: 7, borderRadius: 3.5 },
   priorityStatLabel: { fontSize: 11, color: Colors.textSecondary },
   priorityStatValue: { fontSize: 14, fontWeight: '700' },
+  priorityStatPercent: { fontSize: 11, fontWeight: '600', color: Colors.textSecondary },
   list: { paddingHorizontal: 16, paddingBottom: 100, gap: 10 },
   fab: {
     position: 'absolute', right: 20, bottom: 24, width: 56, height: 56,
