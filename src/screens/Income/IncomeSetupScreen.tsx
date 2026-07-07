@@ -38,7 +38,12 @@ export default function IncomeSetupScreen({ navigation }: any) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        automaticallyAdjustKeyboardInsets
+      >
         <View style={styles.card}>
           <Text style={styles.label}>Monthly Salary (net)</Text>
           <CurrencyInput value={salary} onChangeText={setSalary} placeholder="0.00" />

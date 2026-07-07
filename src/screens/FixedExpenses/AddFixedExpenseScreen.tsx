@@ -39,7 +39,12 @@ export default function AddFixedExpenseScreen({ navigation }: any) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        automaticallyAdjustKeyboardInsets
+      >
         <View style={styles.card}>
           <Text style={styles.label}>Name</Text>
           <TextInput

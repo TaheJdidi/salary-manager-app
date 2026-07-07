@@ -43,7 +43,12 @@ export default function AddVariableExpenseScreen({ route, navigation }: any) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        automaticallyAdjustKeyboardInsets
+      >
         <View style={styles.card}>
           <Text style={styles.label}>Amount</Text>
           <CurrencyInput value={amount} onChangeText={setAmount} />
